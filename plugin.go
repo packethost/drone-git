@@ -131,12 +131,7 @@ func remote(remote string) *exec.Cmd {
 
 // checkouHead executes a git checkout FETCH_HEAD command.
 func checkoutHead() *exec.Cmd {
-	return exec.Command(
-		"git",
-		"checkout",
-		"-qf",
-		"FETCH_HEAD",
-	)
+	return checkoutRef("FETCH_HEAD")
 }
 
 // checkoutSha executes a git reset --hard $ref command.
@@ -146,6 +141,16 @@ func checkoutSha(ref string) *exec.Cmd {
 		"reset",
 		"--hard",
 		"-q",
+		ref,
+	)
+}
+
+// checkoutRef executes a git checkout $ref command.
+func checkoutRef(ref string) *exec.Cmd {
+	return exec.Command(
+		"git",
+		"checkout",
+		"-qf",
 		ref,
 	)
 }
