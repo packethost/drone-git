@@ -3,8 +3,8 @@ ADD . /go/src/github.com/drone-plugins/drone-git
 WORKDIR /go/src/github.com/drone-plugins/drone-git
 RUN go vet
 RUN CGO_ENABLED=0 go build -ldflags "-s -w" -a -tags netgo
-RUN lfs_version=2.5.1 && \
-    lfs_sha256=9565fa9c2442c3982567a3498c9352cda88e0f6a982648054de0440e273749e7 && \
+RUN lfs_version=2.11.0 && \
+    lfs_sha256=46508eb932c2ec0003a940f179246708d4ddc2fec439dcacbf20ff9e98b957c9 && \
     mkdir /tmp/${lfs_version} && \
     curl -o /tmp/lfs.tgz -L "https://github.com/git-lfs/git-lfs/releases/download/v${lfs_version}/git-lfs-linux-amd64-v${lfs_version}.tar.gz" \
     && [ "$(sha256sum /tmp/lfs.tgz | awk '{print $1'})" = ${lfs_sha256} ]  && echo "sha256 match on lfs release" || exit 1 \
