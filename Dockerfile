@@ -1,8 +1,8 @@
-FROM golang:1.10
+FROM golang:1.11
 ADD . /go/src/github.com/drone-plugins/drone-git
 WORKDIR /go/src/github.com/drone-plugins/drone-git
 RUN go vet
-RUN CGO_ENABLED=0 go build -ldflags "-s -w" -a -tags netgo
+RUN CGO_ENABLED=0 GO111MODULE=on go build -ldflags "-s -w" -a -tags netgo
 RUN lfs_version=2.5.1 && \
     lfs_sha256=9565fa9c2442c3982567a3498c9352cda88e0f6a982648054de0440e273749e7 && \
     mkdir /tmp/${lfs_version} && \
@@ -14,13 +14,11 @@ RUN lfs_version=2.5.1 && \
     && rm -r /tmp/${lfs_version}
 
 FROM plugins/base:amd64
-MAINTAINER Drone.IO Community <drone-dev@googlegroups.com>
 
-LABEL org.label-schema.version=latest
-LABEL org.label-schema.vcs-url="https://github.com/drone-plugins/drone-git.git"
-LABEL org.label-schema.name="Drone Git"
-LABEL org.label-schema.vendor="Drone.IO Community"
-LABEL org.label-schema.schema-version="1.0"
+LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
+  org.label-schema.name="Drone Git" \
+  org.label-schema.vendor="Drone.IO Community" \
+  org.label-schema.schema-version="1.0"
 
 COPY --from=0 /go/src/github.com/drone-plugins/drone-git/drone-git /bin/git-lfs /bin/
 RUN apk add --no-cache ca-certificates curl git openssh perl && git lfs install
