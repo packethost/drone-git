@@ -44,7 +44,12 @@ func (p Plugin) Exec() error {
 	}
 
 	switch {
-	case isPullRequest(p.Build.Event) || isTag(p.Build.Event, p.Build.Ref):
+	case isPullRequest(p.Build.Event):
+		cmds = append(cmds, fetch(p.Build.Branch, p.Config.Tags, p.Config.Depth))
+		cmds = append(cmds, checkoutRef(p.Build.Branch))
+		cmds = append(cmds, fetch("refs/pull/"+p.Build.PR+"/head", p.Config.Tags, p.Config.Depth))
+		cmds = append(cmds, mergeRef(p.Build.Commit))
+	case isTag(p.Build.Event, p.Build.Ref):
 		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
 		cmds = append(cmds, checkoutHead())
 	default:
