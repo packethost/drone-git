@@ -155,6 +155,15 @@ func checkoutRef(ref string) *exec.Cmd {
 	)
 }
 
+// mergeRef executes a git merge $ref command.
+func mergeRef(ref string) *exec.Cmd {
+	return exec.Command(
+		"git",
+		"merge",
+		ref,
+	)
+}
+
 // fetch retuns git command that fetches from origin. If tags is true
 // then tags will be fetched.
 func fetch(ref string, tags bool, depth int) *exec.Cmd {
