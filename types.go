@@ -15,6 +15,8 @@ type (
 		Event  string
 		Number int
 		Commit string
+		Branch string
+		PR     string
 		Ref    string
 	}
 
