@@ -1,8 +1,8 @@
-FROM golang:1.11
+FROM golang:1.14
 ADD . /go/src/github.com/drone-plugins/drone-git
 WORKDIR /go/src/github.com/drone-plugins/drone-git
 RUN go vet
-RUN CGO_ENABLED=0 GO111MODULE=on go build -ldflags "-s -w" -a -tags netgo
+RUN CGO_ENABLED=0 go build -ldflags "-s -w" -a -tags netgo
 RUN lfs_version=2.5.1 && \
     lfs_sha256=9565fa9c2442c3982567a3498c9352cda88e0f6a982648054de0440e273749e7 && \
     mkdir /tmp/${lfs_version} && \
