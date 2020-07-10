@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -42,6 +43,16 @@ func main() {
 			Value:  "refs/heads/master",
 			Usage:  "git commit ref",
 			EnvVar: "PLUGIN_REF,DRONE_COMMIT_REF",
+		},
+		cli.StringFlag{
+			Name:   "pr",
+			Usage:  "pull request number",
+			EnvVar: "PLUGIN_PULL_REQUEST,DRONE_PULL_REQUEST",
+		},
+		cli.StringFlag{
+			Name:   "branch",
+			Usage:  "pull request target branch",
+			EnvVar: "PLUGIN_BRANCHE,DRONE_BRANCH",
 		},
 		cli.StringFlag{
 			Name:   "event",
@@ -130,8 +141,10 @@ func run(c *cli.Context) error {
 		},
 		Build: Build{
 			Commit: c.String("sha"),
+			Branch: c.String("branch"),
 			Event:  c.String("event"),
 			Path:   c.String("path"),
+			PR:     c.String("pr"),
 			Ref:    c.String("ref"),
 		},
 		Netrc: Netrc{
@@ -152,6 +165,7 @@ func run(c *cli.Context) error {
 			Duration: c.Duration("backoff"),
 		},
 	}
+	spew.Dump(plugin)
 
 	return plugin.Exec()
 }

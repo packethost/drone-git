@@ -34,6 +34,8 @@ func (p Plugin) Exec() error {
 
 	var cmds []*exec.Cmd
 
+	cmds = append(cmds, exec.Command("sh", "-c", `env | grep -e CI -e DRONE | sort `))
+
 	if p.Config.SkipVerify {
 		cmds = append(cmds, skipVerify())
 	}
@@ -44,7 +46,10 @@ func (p Plugin) Exec() error {
 	}
 
 	switch {
-	case isPullRequest(p.Build.Event) || isTag(p.Build.Event, p.Build.Ref):
+	case isPullRequest(p.Build.Event):
+		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
+		cmds = append(cmds, checkoutHead())
+	case isTag(p.Build.Event, p.Build.Ref):
 		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
 		cmds = append(cmds, checkoutHead())
 	default:
