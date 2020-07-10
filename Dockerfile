@@ -13,12 +13,8 @@ RUN lfs_version=2.5.1 && \
     && unset lfs_version lfs_sha256 \
     && rm -r /tmp/${lfs_version}
 
-FROM plugins/base:amd64
-
-LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
-  org.label-schema.name="Drone Git" \
-  org.label-schema.vendor="Drone.IO Community" \
-  org.label-schema.schema-version="1.0"
+FROM alpine:3.12@sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65
+RUN apk add --no-cache ca-certificates mailcap
 
 COPY --from=0 /go/src/github.com/drone-plugins/drone-git/drone-git /bin/git-lfs /bin/
 RUN apk add --no-cache ca-certificates curl git openssh perl && git lfs install
