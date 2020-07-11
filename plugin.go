@@ -44,7 +44,12 @@ func (p Plugin) Exec() error {
 	}
 
 	switch {
-	case isPullRequest(p.Build.Event) || isTag(p.Build.Event, p.Build.Ref):
+	case isPullRequest(p.Build.Event):
+		cmds = append(cmds, fetch(p.Build.Branch, p.Config.Tags, p.Config.Depth))
+		cmds = append(cmds, checkoutRef(p.Build.Branch))
+		cmds = append(cmds, fetch("refs/pull/"+p.Build.PR+"/head", p.Config.Tags, p.Config.Depth))
+		cmds = append(cmds, mergeRef(p.Build.Commit))
+	case isTag(p.Build.Event, p.Build.Ref):
 		cmds = append(cmds, fetch(p.Build.Ref, p.Config.Tags, p.Config.Depth))
 		cmds = append(cmds, checkoutHead())
 	default:
@@ -129,24 +134,38 @@ func remote(remote string) *exec.Cmd {
 	)
 }
 
-// Checkout executes a git checkout command.
+// checkouHead executes a git checkout FETCH_HEAD command.
 func checkoutHead() *exec.Cmd {
-	return exec.Command(
-		"git",
-		"checkout",
-		"-qf",
-		"FETCH_HEAD",
-	)
+	return checkoutRef("FETCH_HEAD")
 }
 
-// Checkout executes a git checkout command.
-func checkoutSha(commit string) *exec.Cmd {
+// checkoutSha executes a git reset --hard $ref command.
+func checkoutSha(ref string) *exec.Cmd {
 	return exec.Command(
 		"git",
 		"reset",
 		"--hard",
 		"-q",
-		commit,
+		ref,
+	)
+}
+
+// checkoutRef executes a git checkout $ref command.
+func checkoutRef(ref string) *exec.Cmd {
+	return exec.Command(
+		"git",
+		"checkout",
+		"-qf",
+		ref,
+	)
+}
+
+// mergeRef executes a git merge $ref command.
+func mergeRef(ref string) *exec.Cmd {
+	return exec.Command(
+		"git",
+		"merge",
+		ref,
 	)
 }
 

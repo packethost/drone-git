@@ -5,19 +5,22 @@ import (
 	"os"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
-var build = "0" // build number set at compile-time
+var (
+	version = "0.0.0"
+	build   = "0"
+)
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "git plugin"
 	app.Usage = "git plugin"
+	app.Version = fmt.Sprintf("%s+%s", version, build)
 	app.Action = run
-	app.Version = fmt.Sprintf("1.1.%s", build)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:   "remote",
@@ -39,6 +42,16 @@ func main() {
 			Value:  "refs/heads/master",
 			Usage:  "git commit ref",
 			EnvVar: "PLUGIN_REF,DRONE_COMMIT_REF",
+		},
+		cli.StringFlag{
+			Name:   "pr",
+			Usage:  "pull request number",
+			EnvVar: "PLUGIN_PULL_REQUEST,DRONE_PULL_REQUEST",
+		},
+		cli.StringFlag{
+			Name:   "branch",
+			Usage:  "pull request target branch",
+			EnvVar: "PLUGIN_BRANCHE,DRONE_BRANCH",
 		},
 		cli.StringFlag{
 			Name:   "event",
@@ -127,8 +140,10 @@ func run(c *cli.Context) error {
 		},
 		Build: Build{
 			Commit: c.String("sha"),
+			Branch: c.String("branch"),
 			Event:  c.String("event"),
 			Path:   c.String("path"),
+			PR:     c.String("pr"),
 			Ref:    c.String("ref"),
 		},
 		Netrc: Netrc{

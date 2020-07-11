@@ -1,10 +1,10 @@
-FROM golang:1.10
+FROM golang:1.14
 ADD . /go/src/github.com/drone-plugins/drone-git
 WORKDIR /go/src/github.com/drone-plugins/drone-git
 RUN go vet
 RUN CGO_ENABLED=0 go build -ldflags "-s -w" -a -tags netgo
-RUN lfs_version=2.5.1 && \
-    lfs_sha256=9565fa9c2442c3982567a3498c9352cda88e0f6a982648054de0440e273749e7 && \
+RUN lfs_version=2.11.0 && \
+    lfs_sha256=46508eb932c2ec0003a940f179246708d4ddc2fec439dcacbf20ff9e98b957c9 && \
     mkdir /tmp/${lfs_version} && \
     curl -o /tmp/lfs.tgz -L "https://github.com/git-lfs/git-lfs/releases/download/v${lfs_version}/git-lfs-linux-amd64-v${lfs_version}.tar.gz" \
     && [ "$(sha256sum /tmp/lfs.tgz | awk '{print $1'})" = ${lfs_sha256} ]  && echo "sha256 match on lfs release" || exit 1 \
@@ -13,14 +13,8 @@ RUN lfs_version=2.5.1 && \
     && unset lfs_version lfs_sha256 \
     && rm -r /tmp/${lfs_version}
 
-FROM plugins/base:amd64
-MAINTAINER Drone.IO Community <drone-dev@googlegroups.com>
-
-LABEL org.label-schema.version=latest
-LABEL org.label-schema.vcs-url="https://github.com/drone-plugins/drone-git.git"
-LABEL org.label-schema.name="Drone Git"
-LABEL org.label-schema.vendor="Drone.IO Community"
-LABEL org.label-schema.schema-version="1.0"
+FROM alpine:3.12@sha256:a15790640a6690aa1730c38cf0a440e2aa44aaca9b0e8931a9f2b0d7cc90fd65
+RUN apk add --no-cache ca-certificates mailcap
 
 COPY --from=0 /go/src/github.com/drone-plugins/drone-git/drone-git /bin/git-lfs /bin/
 RUN apk add --no-cache ca-certificates curl git openssh perl && git lfs install
