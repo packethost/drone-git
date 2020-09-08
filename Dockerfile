@@ -18,5 +18,6 @@ RUN apk add --no-cache ca-certificates mailcap
 
 COPY --from=0 /go/src/github.com/drone-plugins/drone-git/drone-git /bin/git-lfs /bin/
 RUN apk add --no-cache ca-certificates curl git openssh perl && git lfs install
+RUN git config --system user.name "Drone" && git config --system user.email "drone@drone"
 
 ENTRYPOINT ["/bin/drone-git"]
