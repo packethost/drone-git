@@ -4,8 +4,11 @@
 [![Go Doc](https://godoc.org/github.com/drone-plugins/drone-git?status.svg)](http://godoc.org/github.com/drone-plugins/drone-git)
 [![Go Report](https://goreportcard.com/badge/github.com/drone-plugins/drone-git)](https://goreportcard.com/report/github.com/drone-plugins/drone-git)
 [![](https://images.microbadger.com/badges/image/plugins/git.svg)](https://microbadger.com/images/plugins/git "Get your own image badge on microbadger.com")
+![](https://img.shields.io/badge/Stability-Experimental-red.svg)
 
 Drone plugin to clone `git` repositories. For the usage information and a listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-git).
+
+This repository is [Experimental](https://github.com/packethost/standards/blob/master/experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
 
 ## Build
 
